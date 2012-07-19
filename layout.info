@@ -1,0 +1,5 @@
+name = Panels responsive layouts
+description = Flexible responsive layout editor for panels.
+core = 7.x
+
+dependencies[] = panels

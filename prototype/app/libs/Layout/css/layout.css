@@ -1,0 +1,98 @@
+#container {
+  width: 960px;
+  margin: 0 auto;
+}
+h1 {
+  text-align: center;
+}
+
+/* @group Region and row styles */
+
+.row {
+  clear: both;
+  -webkit-user-select: none;
+}
+.row:before, .row:after, .row-changed:before, .row-changed:after {
+  content: "";
+  display: table;
+}
+.row:after, .row-changed:after {
+  clear: both;
+}
+.region {
+  padding: 0;
+  float: left;
+  width: 960px; /* splitter def: 960px */
+  height: 68px;
+  background-color: #555;
+  color: white;
+  z-index: 100;
+  margin: 8px 0;
+}
+.region p {
+  padding: 10px;
+  margin: 0;
+  float: left;
+  z-index: 0;
+  width: auto;
+  overflow: hidden;
+}
+.region.created {
+  width: 0;
+  height: 68px;
+  overflow: hidden;
+  border: 1px solid #555;
+}
+.region.empty.new {
+  outline: 1px dashed #31cbff;
+  background-color: white;
+  color: #ccc;
+  height: 68px;
+}
+.region.empty {
+  width: 0;
+  border: 0;
+}
+.splitter {
+  width: 11px;
+  float: left;
+	cursor: e-resize;	/* in case col-resize isn't supported */
+	cursor: col-resize;
+  height: 68px;
+  z-index: 1;
+  background: #555 url('../images/grippie.png') center center no-repeat;
+  display: block;
+}
+.splitter.splitter-right {
+  float: right;
+}
+.splitter.splitter-active {
+  background: url('../images/grippie-active.png') 0 -1px;
+}
+.region.empty.new .splitter {
+  display: none;
+}
+
+/* @group Sortable */
+
+.ui-sortable .ui-state-highlight {
+  height: 50px;
+  padding: 10px;
+  margin: 1em 0;
+}
+.ui-sortable .region .drag-icon {
+  font-size: 2em;
+  margin-right: 1em;
+}
+.ui-sortable .region .remove-icon {
+  position: absolute;
+  right: 5px;
+  top: 20px;
+  background-color: #cdcdcd;
+  border-radius: 10px;
+  color: #484848;
+  padding: 4px;
+  cursor: default;
+}
+
+/* @end */
