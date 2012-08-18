@@ -27,7 +27,7 @@
      */
     StepManager.prototype.build = function ($stepContainer) {
       this.$editor = $('<div>', {});
-      var handler, i, step;
+      var handler, i, step, breakpoint, size, label, id;
       this.$stepContainer = ($stepContainer.length > 0) ? $stepContainer : this.$stepContainer;
       // Clear the UI.
       this.$stepContainer.children().remove();
@@ -35,6 +35,7 @@
       for (i = 0; i < this.steps.length; i++) {
         step = this.steps[i];
         breakpoint = step.info('breakpoint');
+        size = step.info('size');
         label = step.info('label');
         id = 'breakpoint-' + breakpoint;
         this.$stepContainer
@@ -46,7 +47,7 @@
             $('<a>', {
               'class': 'rld-link',
               'href': '#' + id,
-              'text': (breakpoint === 0) ? 'default' : breakpoint + 'px'
+              'text': size + 'px'
             })
             .data('RLD/Step', step)
           )
