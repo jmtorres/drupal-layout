@@ -102,7 +102,8 @@
             'html': $body
           });
           frame = document.createElement('iframe');
-          frame.height = document.documentElement.clientHeight;
+          // Hard-coded offset. This is bad bad bad. 
+          frame.height = document.documentElement.clientHeight - 120;
           frame.className = 'rld-modal rld-previewer';
           document.body.appendChild(frame);
           var content = '<!DOCTYPE html><html><head>' + $head.html() + '</head><body>' + $body.html() + '</body></html>';
@@ -110,37 +111,40 @@
           frame.contentWindow.document.open('text/html', 'replace');
           frame.contentWindow.document.write(content);
           frame.contentWindow.document.close();
-        
-          $frame = $('.rld-previewer');
-          $('<div>', {
-            'class': 'rld-modal rld-modal-screen'
-          })
-          .insertBefore($frame)
-          .fadeIn();
-          $('<div>', {
-            'class': 'rld-modal rld-modal-close',
-            'html': $('<a>', {
-              'href': '#',
-              'text': 'Close'
-            })
-            .on({
-              'click': function (event) {
-                // The following functions are acting globally on the page. This is bad bad bad.
-                // They should only apply with the application or the editor.
-                $('.rld-steps .rld-active').removeClass('rld-active');
-                $('.rld-modal').fadeOut(function () {
-                  $(this).remove();
-                });
-              }
-            })
-          })
-          .prependTo($editor);
+          var $frame = $('.rld-previewer');
           width = Number(step.info('size'));
           $frame.animate({
             width: width,
             left: (document.documentElement.clientWidth - width ) / 2
           });
         });
+        $('.rld-previewer');
+        $('<div>', {
+          'class': 'rld-modal rld-modal-screen'
+        })
+        .css({
+          'display': 'none'
+        })
+        .appendTo('body')
+        .fadeIn();
+        $('<div>', {
+          'class': 'rld-modal rld-modal-close',
+          'html': $('<a>', {
+            'href': '#',
+            'text': 'Close'
+          })
+          .on({
+            'click': function (event) {
+              // The following functions are acting globally on the page. This is bad bad bad.
+              // They should only apply with the application or the editor.
+              $('.rld-steps .rld-active').removeClass('rld-active');
+              $('.rld-modal').fadeOut(function () {
+                $(this).remove();
+              });
+            }
+          })
+        })
+        .prependTo($editor);
       }
       width = Number(step.info('size'));
       $frame.animate({
