@@ -273,6 +273,11 @@
   position: absolute;
   top: 100px;
 }
+@media (max-width:600px) {
+  .rld-layout-previewer {
+    display: none;    
+  }
+}
 .rld-modal-screen {
   background-color: white;
   bottom: 0;
