@@ -135,16 +135,16 @@
             })
           })
           .prependTo($editor);
-          width = Number(step.info('breakpoint'));
+          width = Number(step.info('size'));
           $frame.animate({
-            width: Number(step.info('breakpoint')),
+            width: width,
             left: (document.documentElement.clientWidth - width ) / 2
           });
         });
       }
-      width = Number(step.info('breakpoint'));
+      width = Number(step.info('size'));
       $frame.animate({
-        width: Number(step.info('breakpoint')),
+        width: width,
         left: (document.documentElement.clientWidth - width ) / 2
       });
       this.topic('stepActivated').publish(step);

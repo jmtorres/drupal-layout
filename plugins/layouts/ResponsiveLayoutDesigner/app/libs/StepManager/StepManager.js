@@ -46,7 +46,7 @@
             $('<a>', {
               'class': 'rld-link',
               'href': '#' + id,
-              'text': breakpoint + 'px'
+              'text': (breakpoint === 0) ? 'default' : breakpoint + 'px'
             })
             .data('RLD/Step', step)
           )
