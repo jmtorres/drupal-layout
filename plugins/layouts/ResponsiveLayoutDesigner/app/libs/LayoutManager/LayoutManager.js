@@ -270,11 +270,15 @@
       // Create and insert the dialog.
       var $dialog = $('<div>', {
         'class': 'rld-dialog'
-      })
-      .append($('<label>', {
-        'text': 'Existing region'
-      }))
-      .append($availableRegionSelectbox)
+      });
+      if (availableRegions.length > 0) {
+        $dialog
+        .append($('<label>', {
+          'text': 'Existing region'
+        }))
+        .append($availableRegionSelectbox);
+      };
+      $dialog
       .append($('<label>', {
         'text': 'New region'
       }))
@@ -318,7 +322,7 @@
       // If an available region is selected, add it.
       var region;
       var $selectedAvailableRegion = $dialog.find('[name="available-region-select"]').find('option').filter(':selected');
-      if ($selectedAvailableRegion.val() !== 'null') {
+      if ($selectedAvailableRegion.length > 0 && $selectedAvailableRegion.val() !== 'null') {
         var region = this.availableRegionList.getItem($selectedAvailableRegion.val());
         this.regionList.insertItem({
           'machine_name': region.machine_name,
