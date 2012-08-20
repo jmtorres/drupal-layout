@@ -9,6 +9,11 @@
  * Implements hook_init().
  */
 function layout_init() {
+  // Don't load the ResponsiveLayoutDesigner preview bar on admin pages.
+  if (arg(0) == 'admin') {
+    return;
+  }
+
   // Load the responsive layout object.
   ctools_include('plugins');
   $layouts = ctools_get_plugins('panels', 'layouts');
