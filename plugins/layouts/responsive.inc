@@ -214,6 +214,9 @@ function theme_layout_responsive($vars) {
 
   layout_responsive_merge_default_settings($settings, $layout);
 
+  $breakpoints = layout_breakpoint_load_all();
+  $grids = gridbuilder_load_all();
+
   // Render the regions ordered as configured with minimal wrappers.
   $output = '';
   $breakpoint_counters = array();
