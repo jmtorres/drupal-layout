@@ -214,21 +214,6 @@ function theme_layout_responsive($vars) {
 
   layout_responsive_merge_default_settings($settings, $layout);
 
-  $breakpoints = layout_breakpoint_load_all();
-  $grids = gridbuilder_load_all();
-  // Push the breakpoints info to settings for the layoutPreviewer.
-  drupal_add_js(array(
-    'layout' => array(
-      'breakpoints' => $breakpoints,
-      'grids' => $grids,
-    ),
-  ), 'setting');
-  // Add the ResponsiveLayoutDesigner application.
-  layout_responsive_load_rld_application($layout['path']);
-  drupal_add_css($layout['path'] . '/responsive-in-place.css');
-  // Add integration code for Drupal.
-  drupal_add_js($layout['path'] . '/responsive-in-place.js');
-
   // Render the regions ordered as configured with minimal wrappers.
   $output = '';
   $breakpoint_counters = array();
