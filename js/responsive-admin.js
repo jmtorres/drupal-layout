@@ -28,7 +28,7 @@ Drupal.responsiveLayout.init = function() {
   // Initialize region list and per-breakpoint columns.
   var regionList = [];
   var regionNames = {};
-  var layoutConfig = JSON.parse($('#edit-layout-settings-layout-responsive-regions').val());
+  var layoutConfig = JSON.parse($('#edit-layout-regions').val());
   for (var regionIndex in layoutConfig.regions) {
     regionList.push({
       'machine_name': layoutConfig.regions[regionIndex].name,
@@ -146,4 +146,4 @@ Drupal.responsiveLayout.recordState = function(event) {
   $('#edit-layout-settings-layout-responsive-regions').val(JSON.stringify(layoutSettings));
 }
 
-})(jQuery, ResponsiveLayoutDesigner, JSON);
+})(jQuery, ResponsiveLayoutDesigner, window.JSON);

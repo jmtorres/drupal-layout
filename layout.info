@@ -1,8 +1,13 @@
-name = Panels responsive layouts
-description = Responsive layout editor for panels.
-core = 7.x
+name = Layout
+description = Responsive layout editor.
+package = Core
+version = VERSION
+core = 8.x
+dependencies[] = config
+configure = admin/structure/layouts
 
-dependencies[] = panels
+dependencies[] = bunnypoint
+dependencies[] = region
 dependencies[] = gridbuilder
-dependencies[] = json2
-dependencies[] = jquery_update
+;dependencies[] = json2
+;dependencies[] = jquery_update

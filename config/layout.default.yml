@@ -1,0 +1,19 @@
+id: default
+label: Default layout
+regions:
+  header_a: header_a
+  header_b: header_b
+  header_c: header_c
+  subheader_a: subheader_a
+  subheader_b: subheader_b
+  subheader_c: subheader_c
+  navigation: navigation
+  title: title
+  body: body
+  sidebar_a: sidebar_a
+  sidebar_b: sidebar_b
+  sidebar_c: sidebar_c
+  footer_a: footer_a
+  footer_b: footer_b
+  footer_c: footer_c
+overrides:
