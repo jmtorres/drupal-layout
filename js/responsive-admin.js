@@ -31,10 +31,10 @@ Drupal.responsiveLayout.init = function() {
   var layoutConfig = JSON.parse($('#edit-layout-regions').val());
   for (var regionIndex in layoutConfig.regions) {
     regionList.push({
-      'machine_name': layoutConfig.regions[regionIndex].name,
-      'label': layoutConfig.regions[regionIndex].admin_title,
+      'machine_name': layoutConfig.regions[regionIndex].id,
+      'label': layoutConfig.regions[regionIndex].label,
     });
-    regionNames[layoutConfig.regions[regionIndex].name] = '';
+    regionNames[layoutConfig.regions[regionIndex].id] = '';
   }
 
   // More regions that are available for this layout to use (but not currently
@@ -44,7 +44,7 @@ Drupal.responsiveLayout.init = function() {
     if (!(existingRegionName in regionNames)) {
       availableRegionList.push({
         'machine_name': existingRegionName,
-        'label': Drupal.settings.responsiveLayout.defaultRegions[existingRegionName].admin_title
+        'label': Drupal.settings.responsiveLayout.defaultRegions[existingRegionName].label
       });
     }
   }
@@ -53,9 +53,9 @@ Drupal.responsiveLayout.init = function() {
   var gridList = [];
   for (var gridIndex in Drupal.settings.responsiveLayout.defaultGrids) {
     gridList.push({
-      'machine_name': Drupal.settings.responsiveLayout.defaultGrids[gridIndex].name,
+      'machine_name': Drupal.settings.responsiveLayout.defaultGrids[gridIndex].id,
       'columns': Drupal.settings.responsiveLayout.defaultGrids[gridIndex].columns,
-      'classes': ['rld-container-' + Drupal.settings.responsiveLayout.defaultGrids[gridIndex].name],
+      'classes': ['rld-container-' + Drupal.settings.responsiveLayout.defaultGrids[gridIndex].id],
     });
   }
 
@@ -63,19 +63,19 @@ Drupal.responsiveLayout.init = function() {
   var breakpointList = [];
   for (var breakpointIndex in Drupal.settings.responsiveLayout.defaultBreakpoints) {
     var overrideList = [];
-    var name = Drupal.settings.responsiveLayout.defaultBreakpoints[breakpointIndex].name;
+    var name = Drupal.settings.responsiveLayout.defaultBreakpoints[breakpointIndex].id;
     for (var overrideIndex in layoutConfig.overrides[name]) {
       overrideList.push({
-        'machine_name': layoutConfig.overrides[name][overrideIndex].name,
+        'machine_name': layoutConfig.overrides[name][overrideIndex].id,
         'columns': layoutConfig.overrides[name][overrideIndex].columns,
       });
     }
     breakpointList.push({
-      'label': Drupal.settings.responsiveLayout.defaultBreakpoints[breakpointIndex].admin_title,
+      'label': Drupal.settings.responsiveLayout.defaultBreakpoints[breakpointIndex].label,
       'machine_name': name,
       // @todo: make sure that em/px based breakpoints work alike.
       'breakpoint': parseInt(Drupal.settings.responsiveLayout.defaultBreakpoints[breakpointIndex].width),
-      'grid': Drupal.settings.responsiveLayout.defaultBreakpoints[breakpointIndex].grid_name,
+      'grid': Drupal.settings.responsiveLayout.defaultBreakpoints[breakpointIndex].grid,
       'regions': overrideList,
     });
   }
@@ -121,7 +121,7 @@ Drupal.responsiveLayout.recordState = function(event) {
   var regionList = layoutManager.info('regionList');
   var regions = regionList.info('items');
   for (var i = 0; i < regions.length; i++) {
-    layoutSettings.regions.push({'name': regions[i].info('machine_name'), 'admin_title': regions[i].info('label')});
+    layoutSettings.regions.push({'id': regions[i].info('machine_name'), 'label': regions[i].info('label')});
   }
 
   var stepList = layoutManager.info('stepList');
@@ -143,7 +143,7 @@ Drupal.responsiveLayout.recordState = function(event) {
   // built with rapid changes in mind (ordering, adding new regions, resizing),
   // and we don't have a live preview needed given the useful builder view
   // itself.
-  $('#edit-layout-settings-layout-responsive-regions').val(JSON.stringify(layoutSettings));
+  $('#edit-layout-regions').val(JSON.stringify(layoutSettings));
 }
 
 })(jQuery, ResponsiveLayoutDesigner, window.JSON);

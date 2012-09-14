@@ -59,8 +59,8 @@ class LayoutFormController extends EntityFormController {
     $default_regions = region_load_all();
     foreach ($layout->regions as $id => $label) {
       $layoutdata['regions'][] = array(
-        'name' => $id,
-        'admin_title' => $default_regions[$id]->label(),
+        'id' => $id,
+        'label' => $default_regions[$id]->label(),
       );
     }
     $layoutdata['overrides'] = $layout->overrides;
@@ -74,8 +74,8 @@ class LayoutFormController extends EntityFormController {
 
     $form['#attached'] = array(
       'library' => array(
-        array('system', 'ui.dialog'),
-        array('system', 'ui.sortable'),
+        array('system', 'jquery.ui.dialog'),
+        array('system', 'jquery.ui.sortable'),
         array('layout', 'layout-rld'),
         array('layout', 'layout-admin'),
       ),
@@ -155,13 +155,13 @@ class LayoutFormController extends EntityFormController {
     if (!empty($new_layout_settings)) {
       $layout->regions = array();
       foreach ($new_layout_settings['regions'] as $region) {
-        $layout->regions[$region['name']] = $region['name'];
+        $layout->regions[$region['id']] = $region['id'];
 
         /*/ Save region in common regions list in case it is new.
-        if (!isset($default_regions[$region['name']])) {
+        if (!isset($default_regions[$region['id']])) {
           $region = (object) array(
-            'name' => $region['name'],
-            'admin_title' => $region['admin_title'],
+            'id' => $region['id'],
+            'label' => $region['label'],
           );
           region_save($region);
         }*/
