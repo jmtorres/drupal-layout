@@ -8,7 +8,7 @@
 namespace Drupal\layout;
 
 use Drupal\entity\EntityInterface;
-use Drupal\entity\EntityFormController;
+use Drupal\Core\Entity\EntityFormController;
 use Drupal\region\Region;
 
 /**
@@ -17,7 +17,7 @@ use Drupal\region\Region;
 class LayoutFormController extends EntityFormController {
 
   /**
-   * Overrides Drupal\entity\EntityFormController::prepareEntity().
+   * Overrides Drupal\Core\Entity\EntityFormController::prepareEntity().
    *
    * Prepares the layout object filling in a few default values.
    */
@@ -34,7 +34,7 @@ class LayoutFormController extends EntityFormController {
   }
 
   /**
-   * Overrides Drupal\entity\EntityFormController::form().
+   * Overrides Drupal\Core\Entity\EntityFormController::form().
    */
   public function form(array $form, array &$form_state, EntityInterface $layout) {
     $form['label'] = array(
@@ -125,7 +125,7 @@ class LayoutFormController extends EntityFormController {
   }
 
   /**
-   * Overrides Drupal\entity\EntityFormController::actions().
+   * Overrides Drupal\Core\Entity\EntityFormController::actions().
    */
   protected function actions(array $form, array &$form_state) {
     // Only includes a Save action for the entity, no direct Delete button.
@@ -144,7 +144,7 @@ class LayoutFormController extends EntityFormController {
   }
 
   /**
-   * Overrides Drupal\entity\EntityFormController::save().
+   * Overrides Drupal\Core\Entity\EntityFormController::save().
    */
   public function save(array $form, array &$form_state) {
     $layout = $this->getEntity($form_state);
