@@ -131,7 +131,7 @@ Drupal.responsiveLayout.recordState = function(event) {
     if (steps[i].regionList.items.length) {
       for (var r = 0; r < steps[i].regionList.items.length; r++) {
         layoutSettings.overrides[steps[i].machine_name].push({
-          'name': steps[i].regionList.items[r].machine_name,
+          'id': steps[i].regionList.items[r].machine_name,
           'columns': steps[i].regionList.items[r].columns
         });
       }

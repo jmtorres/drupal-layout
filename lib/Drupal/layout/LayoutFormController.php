@@ -63,7 +63,7 @@ class LayoutFormController extends EntityFormController {
         'label' => $default_regions[$id]->label(),
       );
     }
-    $layoutdata['overrides'] = $layout->overrides;
+    $layoutdata['overrides'] = (array) $layout->overrides;
 
     $form['layout_regions'] = array(
       '#type' => 'textarea',
