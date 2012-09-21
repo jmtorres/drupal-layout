@@ -7,7 +7,7 @@
 
 namespace Drupal\layout;
 
-use Drupal\entity\EntityInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityFormController;
 use Drupal\region\Region;
 
