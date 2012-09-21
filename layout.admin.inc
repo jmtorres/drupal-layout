@@ -5,12 +5,24 @@
  * Administration functions to maintain a set of layouts.
  */
 
+use Drupal\layout\Layout;
+
+/**
+ * Page callback: Presents list of layouts.
+ *
+ * @see layout_menu()
+ */
+function layout_page_list() {
+  $controller = entity_list_controller('layout');
+  return $controller->render();
+}
+
 /**
  * Page callback: Presents the layout editing form.
  *
  * @see layout_menu()
  */
-function layout_page_edit($layout) {
+function layout_page_edit(Layout $layout) {
   drupal_set_title(t('<em>Edit layout</em> @label', array('@label' => $layout->label())), PASS_THROUGH);
   return entity_get_form($layout);
 }
@@ -30,7 +42,7 @@ function layout_page_add() {
  *
  * @see layout_menu()
  */
-function layout_delete_confirm($form, &$form_state, $layout) {
+function layout_delete_confirm($form, &$form_state, Layout $layout) {
   // Always provide entity id in the same form key as in the entity edit form.
   $form['id'] = array('#type' => 'value', '#value' => $layout->id());
   $form_state['layout'] = $layout;

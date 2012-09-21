@@ -5,11 +5,21 @@
  * Responsive layout builder tool for Panels.
  */
 
+use Drupal\layout\Layout;
+
 /**
  * Implements hook_menu().
  */
 function layout_menu() {
   $items = array();
+  $items['admin/structure/layouts'] = array(
+    'title' => 'Layouts',
+    'description' => 'Manage list of layouts.',
+    'page callback' => 'layout_page_list',
+    'access callback' => 'user_access',
+    'access arguments' => array('administer layouts'),
+    'file' => 'layout.admin.inc',
+  );
   $items['admin/structure/layouts/add'] = array(
     'title' => 'Add layout',
     'page callback' => 'layout_page_add',
@@ -62,8 +72,9 @@ function layout_entity_info() {
     'form controller class' => array(
       'default' => 'Drupal\layout\LayoutFormController',
     ),
-    'list controller class' => 'Drupal\layout\LayoutListController',
+    'list controller class' => 'Drupal\config\ConfigEntityListController',
     'list path' => 'admin/structure/layouts',
+    'uri callback' => 'layout_uri',
     'config prefix' => 'layout',
     'entity keys' => array(
       'id' => 'id',
@@ -75,7 +86,25 @@ function layout_entity_info() {
 }
 
 /**
+ * Entity URI callback.
+ *
+ * @param Drupal\layout\Layout $layout
+ *   Layout configuration entity instance.
+ *
+ * @return array
+ *   Entity URI information.
+ */
+function layout_uri(Layout $layout) {
+  return array(
+    'path' => 'admin/structure/layouts/layout/' . $layout->id(),
+  );
+}
+
+/**
  * Load one layout object by its identifier.
+ *
+ * @return Drupal\layout\Layout
+ *   Layout configuration entity instance.
  */
 function layout_load($id) {
   return entity_load('layout', $id);
@@ -83,6 +112,9 @@ function layout_load($id) {
 
 /**
  * Load all layout objects.
+ *
+ * @return array
+ *   List of Drupal\layout\Layout instances keyed by id.
  */
 function layout_load_all() {
   return entity_load_multiple('layout');
