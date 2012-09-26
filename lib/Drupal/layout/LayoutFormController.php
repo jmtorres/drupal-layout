@@ -27,7 +27,7 @@ class LayoutFormController extends EntityFormController {
       $layout->regions = array();
       $default_regions = region_load_all();
       foreach ($default_regions as $region) {
-        $layout->regions[$region->id()] = $region->label();
+        $layout->regions[] = $region->id();
       }
       $layout->overrides = array();
     }
@@ -57,7 +57,7 @@ class LayoutFormController extends EntityFormController {
 
     $layoutdata = array();
     $default_regions = region_load_all();
-    foreach ($layout->regions as $id => $label) {
+    foreach ($layout->regions as $id) {
       $layoutdata['regions'][] = array(
         'id' => $id,
         'label' => $default_regions[$id]->label(),
@@ -155,7 +155,7 @@ class LayoutFormController extends EntityFormController {
     if (!empty($new_layout_settings)) {
       $layout->regions = array();
       foreach ($new_layout_settings['regions'] as $region) {
-        $layout->regions[$region['id']] = $region['id'];
+        $layout->regions[] = $region['id'];
 
         /*/ Save region in common regions list in case it is new.
         if (!isset($default_regions[$region['id']])) {
