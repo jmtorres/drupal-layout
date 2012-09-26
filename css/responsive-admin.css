@@ -1,10 +1,6 @@
-/* @group Panels integration */
+/* @group Base layout editor */
 
-.form-item-admin-description,
-.form-item-category,
-#panels-live-preview,
-#ctools-export-ui-edit-item-form h2,
-.form-item-layout-settings-layout-responsive-regions {
+.form-item-layout-regions {
   display: none;
 }
 
