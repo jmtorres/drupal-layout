@@ -408,9 +408,9 @@
               }
             }
           }
-          layoutManager.topic('regionRemoved').publish(event, layoutManager);
         });
       }
+      layoutManager.topic('regionRemoved').publish(event, layoutManager);
     };
     /**
      *
