@@ -68,11 +68,11 @@ function layout_entity_info() {
   $types['layout'] = array(
     'label' => 'Layout',
     'entity class' => 'Drupal\layout\Layout',
-    'controller class' => 'Drupal\config\ConfigStorageController',
+    'controller class' => 'Drupal\Core\Config\Entity\ConfigStorageController',
     'form controller class' => array(
       'default' => 'Drupal\layout\LayoutFormController',
     ),
-    'list controller class' => 'Drupal\config\ConfigEntityListController',
+    'list controller class' => 'Drupal\Core\Config\Entity\ConfigEntityListController',
     'list path' => 'admin/structure/layouts',
     'uri callback' => 'layout_uri',
     'config prefix' => 'layout',
