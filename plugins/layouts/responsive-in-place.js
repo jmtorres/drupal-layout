@@ -7,9 +7,9 @@
 
   /**
    * Responsive layout previewer class.
-   */  
+   */
   var ResponsiveLayoutPreview = (function () {
-    
+
     function ResponsiveLayoutPreview () {
       // Init the class.
       this.init.apply(this, arguments);
@@ -26,7 +26,7 @@
           'classes': ['rld-container-' + Drupal.settings.layout.grids[index].name]
         });
       }
-    
+
       // Build a list of breakpoints for the editor.
       for (index in Drupal.settings.layout.breakpoints) {
         stepList.push({
@@ -36,7 +36,7 @@
           'grid': Drupal.settings.layout.breakpoints[index].grid_name
         });
       }
-    
+
       // Instantiate a layout designer.
       this.editor = new ResponsiveLayoutDesigner({
         'steps': stepList,
@@ -45,7 +45,7 @@
       // Save a reference to the editor to the DOM for development.
       window.RLDEditor = this.editor;
     };
-    
+
     return ResponsiveLayoutPreview;
   }());
   /**
