@@ -60,7 +60,7 @@
       .editor
       .layoutPreviewer
       .build();
-      $('#navbar-drawer').once('rld-layout-previewer',function (index, element) {
+      $('#navbar .page-controls').once('rld-layout-previewer',function (index, element) {
         $(this).append($previewer);
       });
     }
