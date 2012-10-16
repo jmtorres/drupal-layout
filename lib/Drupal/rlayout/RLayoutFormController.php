@@ -52,7 +52,7 @@ class RLayoutFormController extends EntityFormController {
         'exists' => 'layout_load',
         'source' => array('label'),
       ),
-      '#disabled' => (bool) $layout->id(),
+      '#disabled' => !$layout->isNew(),
     );
 
     $layoutdata = array();
