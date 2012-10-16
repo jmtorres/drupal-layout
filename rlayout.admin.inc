@@ -5,15 +5,15 @@
  * Administration functions to maintain a set of layouts.
  */
 
-use Drupal\layout\Layout;
+use Drupal\rlayout\RLayout;
 
 /**
  * Page callback: Presents list of layouts.
  *
  * @see layout_menu()
  */
-function layout_page_list() {
-  $controller = entity_list_controller('layout');
+function rlayout_page_list() {
+  $controller = entity_list_controller('rlayout');
   return $controller->render();
 }
 
@@ -22,7 +22,7 @@ function layout_page_list() {
  *
  * @see layout_menu()
  */
-function layout_page_edit(Layout $layout) {
+function rlayout_page_edit(RLayout $layout) {
   drupal_set_title(t('<em>Edit layout</em> @label', array('@label' => $layout->label())), PASS_THROUGH);
   return entity_get_form($layout);
 }
@@ -32,8 +32,8 @@ function layout_page_edit(Layout $layout) {
  *
  * @see layout_menu()
  */
-function layout_page_add() {
-  $layout = entity_create('layout', array());
+function rlayout_page_add() {
+  $layout = entity_create('rlayout', array());
   return entity_get_form($layout);
 }
 
@@ -42,7 +42,7 @@ function layout_page_add() {
  *
  * @see layout_menu()
  */
-function layout_delete_confirm($form, &$form_state, Layout $layout) {
+function rlayout_delete_confirm($form, &$form_state, RLayout $layout) {
   // Always provide entity id in the same form key as in the entity edit form.
   $form['id'] = array('#type' => 'value', '#value' => $layout->id());
   $form_state['layout'] = $layout;
@@ -58,7 +58,7 @@ function layout_delete_confirm($form, &$form_state, Layout $layout) {
 /**
  * Form submission handler for layout_delete_confirm().
  */
-function layout_delete_confirm_submit($form, &$form_state) {
+function rlayout_delete_confirm_submit($form, &$form_state) {
   $layout = $form_state['layout'];
   $layout->delete();
   drupal_set_message(t('Layout %label has been deleted.', array('%label' => $layout->label())));

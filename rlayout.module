@@ -5,46 +5,46 @@
  * Responsive layout builder tool for Panels.
  */
 
-use Drupal\layout\Layout;
+use Drupal\rlayout\RLayout;
 
 /**
  * Implements hook_menu().
  */
-function layout_menu() {
+function rlayout_menu() {
   $items = array();
   $items['admin/structure/layouts'] = array(
     'title' => 'Layouts',
     'description' => 'Manage list of layouts.',
-    'page callback' => 'layout_page_list',
+    'page callback' => 'rlayout_page_list',
     'access callback' => 'user_access',
     'access arguments' => array('administer layouts'),
-    'file' => 'layout.admin.inc',
+    'file' => 'rlayout.admin.inc',
   );
   $items['admin/structure/layouts/add'] = array(
     'title' => 'Add layout',
-    'page callback' => 'layout_page_add',
+    'page callback' => 'rlayout_page_add',
     'access callback' => 'user_access',
     'access arguments' => array('administer layouts'),
     'type' => MENU_LOCAL_ACTION,
-    'file' => 'layout.admin.inc',
+    'file' => 'rlayout.admin.inc',
   );
-  $items['admin/structure/layouts/layout/%layout/edit'] = array(
+  $items['admin/structure/layouts/layout/%rlayout/edit'] = array(
     'title' => 'Edit layout',
-    'page callback' => 'layout_page_edit',
+    'page callback' => 'rlayout_page_edit',
     'page arguments' => array(4),
     'access callback' => 'user_access',
     'access arguments' => array('administer layouts'),
     'type' => MENU_CALLBACK,
-    'file' => 'layout.admin.inc',
+    'file' => 'rlayout.admin.inc',
   );
-  $items['admin/structure/layouts/layout/%layout/delete'] = array(
+  $items['admin/structure/layouts/layout/%rlayout/delete'] = array(
     'title' => 'Delete',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('layout_delete_confirm', 4),
+    'page arguments' => array('rlayout_delete_confirm', 4),
     'access callback' => 'user_access',
     'access arguments' => array('administer layouts'),
     'type' => MENU_CALLBACK,
-    'file' => 'layout.admin.inc',
+    'file' => 'rlayout.admin.inc',
   );
   return $items;
 }
@@ -52,7 +52,7 @@ function layout_menu() {
 /**
  * Implements hook_permission().
  */
-function layout_permission() {
+function rlayout_permission() {
   return array(
     'administer layouts' => array(
       'title' => t('Administer responsive layouts'),
@@ -64,18 +64,18 @@ function layout_permission() {
 /**
  * Implements hook_entity_info().
  */
-function layout_entity_info() {
-  $types['layout'] = array(
-    'label' => 'Layout',
-    'entity class' => 'Drupal\layout\Layout',
+function rlayout_entity_info() {
+  $types['rlayout'] = array(
+    'label' => 'Responsive layout',
+    'entity class' => 'Drupal\rlayout\RLayout',
     'controller class' => 'Drupal\Core\Config\Entity\ConfigStorageController',
     'form controller class' => array(
-      'default' => 'Drupal\layout\LayoutFormController',
+      'default' => 'Drupal\rlayout\RLayoutFormController',
     ),
     'list controller class' => 'Drupal\Core\Config\Entity\ConfigEntityListController',
     'list path' => 'admin/structure/layouts',
-    'uri callback' => 'layout_uri',
-    'config prefix' => 'layout',
+    'uri callback' => 'rlayout_uri',
+    'config prefix' => 'rlayout',
     'entity keys' => array(
       'id' => 'id',
       'label' => 'label',
@@ -88,13 +88,13 @@ function layout_entity_info() {
 /**
  * Entity URI callback.
  *
- * @param Drupal\layout\Layout $layout
+ * @param Drupal\rlayout\RLayout $layout
  *   Layout configuration entity instance.
  *
  * @return array
  *   Entity URI information.
  */
-function layout_uri(Layout $layout) {
+function rlayout_uri(RLayout $layout) {
   return array(
     'path' => 'admin/structure/layouts/layout/' . $layout->id(),
   );
@@ -103,28 +103,79 @@ function layout_uri(Layout $layout) {
 /**
  * Load one layout object by its identifier.
  *
- * @return Drupal\layout\Layout
+ * @return Drupal\rlayout\RLayout
  *   Layout configuration entity instance.
  */
-function layout_load($id) {
-  return entity_load('layout', $id);
+function rlayout_load($id) {
+  return entity_load('rlayout', $id);
 }
 
 /**
  * Load all layout objects.
  *
  * @return array
- *   List of Drupal\layout\Layout instances keyed by id.
+ *   List of Drupal\rlayout\RLayout instances keyed by id.
  */
-function layout_load_all() {
-  return entity_load_multiple('layout');
+function rlayout_load_all() {
+  return entity_load_multiple('rlayout');
 }
 
-function layout_library_info() {
-  $path = drupal_get_path('module', 'layout');
-  $rld_path = $path . '/plugins/layouts/ResponsiveLayoutDesigner';
+/**
+ * Helper function to return processed breakpoint information for layouts.
+ *
+ * @todo
+ *   Currently tied to one breakpoint group in gridbuilder, but it should be
+ *   made independent and configurable.
+ */
+function rlayout_breakpoints_load_all() {
+  $grid_breakpoints = entity_load('breakpoint_group', 'module.gridbuilder.gridbuilder');
+  $breakpoint_info = array();
+  foreach ($grid_breakpoints->breakpoints as $key => $breakpoint) {
+    // Only include this breakpoint in the output if we found a grid for it.
+    // Other type of breakpoints are not useful for us, since we cannot display
+    // an editing interface without a grid for each breakpoint.
+    if ($grid = rlayout_breakpoint_find_grid($key)) {
+      // @todo This considers em and px based widths the same number. This is due
+      // to the JS responsive layout designer not being able to take qualified
+      // widths. It can only take numbers. Should be fixed there first and then
+      // here.
+      $low_width = 0;
+      if (preg_match('!min-width: (\d+)[ep]!', $breakpoint->mediaQuery, $found)) {
+        $low_width = $found[1];
+      }
+      $breakpoint_info[$key] = (object) array(
+        'id' => $key,
+        'label' => $breakpoint->label,
+        'width' => $low_width,
+        'grid' => $grid,
+        'mediaQuery' => $breakpoint->mediaQuery,
+      );
+    }
+  }
+  return $breakpoint_info;
+}
 
-  $libraries['layout-rld'] = array(
+/**
+ * Find the (first) grid matching this breakpoint.
+ */
+function rlayout_breakpoint_find_grid($breakpoint_key) {
+  $all_grids = gridbuilder_load_all();
+  foreach ($all_grids as $grid) {
+    if (!empty($grid->breakpoints) && in_array($breakpoint_key, $grid->breakpoints)) {
+      return $grid->id();
+    }
+  }
+  return FALSE;
+}
+
+/**
+ * Implements hook_library_info().
+ */
+function rlayout_library_info() {
+  $path = drupal_get_path('module', 'rlayout');
+  $rld_path = $path . '/designer';
+
+  $libraries['rlayout-designer'] = array(
     'title' => 'Responsive layout designer',
     'version' => '0.1',
     'js' => array(
@@ -149,14 +200,14 @@ function layout_library_info() {
     ),
   );
 
-  $libraries['layout-admin'] = array(
+  $libraries['rlayout-admin'] = array(
     'title' => 'Layout admin interface',
     'version' => '0.1',
     'js' => array(
-      $path . '/js/responsive-admin.js' => array(),
+      $path . '/rlayout-admin.js' => array(),
     ),
     'css' => array(
-      $path . '/css/responsive-admin.css' => array(),
+      $path . '/rlayout-admin.css' => array(),
     ),
   );
   return $libraries;
@@ -166,7 +217,7 @@ function layout_library_info() {
 /**
  * Implements hook_init().
  */
-/*function layout_init() {
+/*function rlayout_init() {
   // Don't load the ResponsiveLayoutDesigner preview bar on admin pages.
   if (arg(0) == 'admin') {
     return;
@@ -177,18 +228,18 @@ function layout_library_info() {
   $layouts = ctools_get_plugins('panels', 'layouts');
   $layout = $layouts['responsive'];
 
-  $bunnypoints = layout_bunnypoint_load_all();
+  $breakpoints = rlayout_breakpoint_load_all();
   $grids = gridbuilder_load_all();
-  // Push the bunnypoints info to settings for the layoutPreviewer.
+  // Push the breakpoints info to settings for the layoutPreviewer.
   drupal_add_js(array(
     'layout' => array(
-      'bunnypoints' => $bunnypoints,
+      'breakpoints' => $breakpoints,
       'grids' => $grids,
     ),
   ), 'setting');
 
   // Add the ResponsiveLayoutDesigner application.
-  layout_responsive_load_rld_application($layout['path']);
+  rlayout_responsive_load_rld_application($layout['path']);
   drupal_add_css($layout['path'] . '/responsive-in-place.css');
   // Add integration code for Drupal.
   drupal_add_js($layout['path'] . '/responsive-in-place.js');
@@ -199,8 +250,8 @@ function layout_library_info() {
 /**
  * Get a list of layout names using the given region machine name.
  */
-/*function layout_get_layouts_using_region($name) {
-  $layouts = layout_get_responsive_layouts();
+/*function rlayout_get_layouts_using_region($name) {
+  $layouts = rlayout_get_responsive_layouts();
   $layouts_using_region = array();
   foreach ($layouts as $data) {
     if (isset($data['layout']->settings['regions']) && is_array($data['layout']->settings['regions']) && isset($data['layout']->settings['regions'][$name])) {
@@ -211,53 +262,33 @@ function layout_library_info() {
 }*/
 
 /**
- * Build CSS for the bunnypoints with media queries.
+ * Build CSS for the breakpoints with media queries.
  *
  * @param boolean $include_media_queries
  *   Whether generate one flat CSS without media queries (useful for
- *   administration), or wrap bunnypoints with media queries (for frontend).
+ *   administration), or wrap breakpoints with media queries (for frontend).
  *
  * @todo
  *   Figure out a good way to avoid equal max/min-weights in subsequent
- *   bunnypoints if that is a problem.
+ *   breakpoints if that is a problem.
  */
-function layout_bunnypoint_get_css($include_media_queries = TRUE) {
-  $bunnypoints = bunnypoint_load_all();
+function rlayout_breakpoint_get_css($include_media_queries = TRUE) {
+  $breakpoints = rlayout_breakpoints_load_all();
 
-  $bunnypoint_css = array();
-  $min_width = 0;
-
-  $bunnypoint_count = count($bunnypoints);
-  $bunnypoint_index = 0;
-  foreach ($bunnypoints as $name => $bunnypoint) {
+  $breakpoint_css = array();
+  foreach ($breakpoints as $name => $breakpoint) {
     if ($include_media_queries) {
-      $first_bunnypoint = $bunnypoint_index == 0;
-      $last_bunnypoint = ($bunnypoint_index == ($bunnypoint_count - 1));
-
-      // Build the media query for this bunnypoint. The first item should not have
-      // a min-width (open ended to 0), and the last item should have no max-width
-      // (open-ended to infinity). Mid-items should both have a min-width and a
-      // max-width.
-      $bunnypoint_css[] =
-        '@media screen and (' .
-        ($first_bunnypoint ? '' : 'min-width:' . $min_width) .
-        ((!$first_bunnypoint && !$last_bunnypoint) ? ') and (' : '') .
-        ($last_bunnypoint ? '' : 'max-width:' . $bunnypoint->width) .
-        ') {';
+      $breakpoint_css[] =
+        '@media ' . $breakpoint->mediaQuery . ' {';
       // Get grid CSS from gridbuilder and apply some extra indentation.
-      $bunnypoint_css[] = '  ' . str_replace("\n", "\n  ", gridbuilder_get_css($bunnypoint->grid, '.panel-responsive', '.rld-span-' . $name . '_'));
-      $bunnypoint_css[] = "\n}";
-
-      // Remember min-width for next bunnypoint if applicable. The bunnypoints
-      // are in ascending width order, so we can rely on this sequence.
-      $min_width = $bunnypoint->width;
-      $bunnypoint_index++;
+      $breakpoint_css[] = '  ' . str_replace("\n", "\n  ", gridbuilder_get_css($breakpoint->grid, '.panel-responsive', '.rld-span-' . $name . '_'));
+      $breakpoint_css[] = "\n}";
     }
     else {
-      $bunnypoint_css[] = gridbuilder_get_css($bunnypoint->grid, NULL, NULL, TRUE);
+      $breakpoint_css[] = gridbuilder_get_css($breakpoint->grid, NULL, NULL, TRUE);
     }
   }
-  $css = join("\n", $bunnypoint_css);
+  $css = join("\n", $breakpoint_css);
 
   return $css;
 }

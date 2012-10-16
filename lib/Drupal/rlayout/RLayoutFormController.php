@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Definition of Drupal\layout\LayoutFormController.
+ * Definition of Drupal\rlayout\RLayoutFormController.
  */
 
-namespace Drupal\layout;
+namespace Drupal\rlayout;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityFormController;
@@ -14,7 +14,7 @@ use Drupal\region\Region;
 /**
  * Form controller for the layout edit/add forms.
  */
-class LayoutFormController extends EntityFormController {
+class RLayoutFormController extends EntityFormController {
 
   /**
    * Overrides Drupal\Core\Entity\EntityFormController::prepareEntity().
@@ -76,8 +76,8 @@ class LayoutFormController extends EntityFormController {
       'library' => array(
         array('system', 'jquery.ui.dialog'),
         array('system', 'jquery.ui.sortable'),
-        array('layout', 'layout-rld'),
-        array('layout', 'layout-admin'),
+        array('rlayout', 'rlayout-designer'),
+        array('rlayout', 'rlayout-admin'),
       ),
       'js' => array(
         array(
@@ -85,7 +85,7 @@ class LayoutFormController extends EntityFormController {
             'responsiveLayout' => array(
               'layout' => $layout,
               'defaultRegions' => region_load_all(),
-              'defaultBreakpoints' => bunnypoint_load_all(),
+              'defaultBreakpoints' => rlayout_breakpoints_load_all(),
               'defaultGrids' => gridbuilder_load_all(),
             ),
           ),
@@ -96,7 +96,7 @@ class LayoutFormController extends EntityFormController {
         array(
           // Embed the grid css inline for now. Yeah, I know this is evil.
           // It is just a prototype for now, ok? I know it is evil. Yes.
-          'data' => layout_bunnypoint_get_css(FALSE),
+          'data' => rlayout_breakpoint_get_css(FALSE),
           'type' => 'inline',
         ),
       ),

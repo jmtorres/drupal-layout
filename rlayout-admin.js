@@ -73,8 +73,8 @@ Drupal.responsiveLayout.init = function() {
     breakpointList.push({
       'label': Drupal.settings.responsiveLayout.defaultBreakpoints[breakpointIndex].label,
       'machine_name': name,
-      // @todo: make sure that em/px based breakpoints work alike.
-      'breakpoint': parseInt(Drupal.settings.responsiveLayout.defaultBreakpoints[breakpointIndex].width),
+      // @todo: make sure that em/px based breakpoints work alike (also on server side).
+      'breakpoint': Drupal.settings.responsiveLayout.defaultBreakpoints[breakpointIndex].width,
       'grid': Drupal.settings.responsiveLayout.defaultBreakpoints[breakpointIndex].grid,
       'regions': overrideList,
     });

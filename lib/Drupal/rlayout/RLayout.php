@@ -2,17 +2,17 @@
 
 /**
  * @file
- * Definition of Drupal\layout\Layout.
+ * Definition of Drupal\rlayout\RLayout.
  */
 
-namespace Drupal\layout;
+namespace Drupal\rlayout;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 
 /**
  * Defines the layout entity.
  */
-class Layout extends ConfigEntityBase {
+class RLayout extends ConfigEntityBase {
 
   /**
    * The layout ID (machine name).
