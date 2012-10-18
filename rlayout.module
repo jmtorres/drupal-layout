@@ -213,54 +213,6 @@ function rlayout_library_info() {
   return $libraries;
 }
 
-
-/**
- * Implements hook_init().
- */
-/*function rlayout_init() {
-  // Don't load the ResponsiveLayoutDesigner preview bar on admin pages.
-  if (arg(0) == 'admin') {
-    return;
-  }
-
-  // Load the responsive layout object.
-  ctools_include('plugins');
-  $layouts = ctools_get_plugins('panels', 'layouts');
-  $layout = $layouts['responsive'];
-
-  $breakpoints = rlayout_breakpoint_load_all();
-  $grids = gridbuilder_load_all();
-  // Push the breakpoints info to settings for the layoutPreviewer.
-  drupal_add_js(array(
-    'layout' => array(
-      'breakpoints' => $breakpoints,
-      'grids' => $grids,
-    ),
-  ), 'setting');
-
-  // Add the ResponsiveLayoutDesigner application.
-  rlayout_responsive_load_rld_application($layout['path']);
-  drupal_add_css($layout['path'] . '/responsive-in-place.css');
-  // Add integration code for Drupal.
-  drupal_add_js($layout['path'] . '/responsive-in-place.js');
-}*/
-
-// == Regions =================================================================
-
-/**
- * Get a list of layout names using the given region machine name.
- */
-/*function rlayout_get_layouts_using_region($name) {
-  $layouts = rlayout_get_responsive_layouts();
-  $layouts_using_region = array();
-  foreach ($layouts as $data) {
-    if (isset($data['layout']->settings['regions']) && is_array($data['layout']->settings['regions']) && isset($data['layout']->settings['regions'][$name])) {
-      $layouts_using_region[$data['layout']->name] = $data['title'];
-    }
-  }
-  return $layouts_using_region;
-}*/
-
 /**
  * Build CSS for the breakpoints with media queries.
  *
