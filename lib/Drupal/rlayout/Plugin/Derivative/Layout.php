@@ -42,11 +42,11 @@ class Layout implements DerivativeInterface {
   public function getDerivativeDefinitions(array $base_plugin_definition) {
     // Use module_invoke() because plugins are active even if the module is not
     // enabled.
-    $derivatives = array();
+    $this->derivatives = array();
     $layouts = module_invoke('rlayout', 'load_all');
     if (!empty($layouts)) {
       foreach ($layouts as $key => $layout) {
-        $derivatives[$key] = array(
+        $this->derivatives[$key] = array(
           'id' => $layout->id(),
           'title' => $layout->label(),
           'available regions' => $layout->regions,
@@ -55,6 +55,6 @@ class Layout implements DerivativeInterface {
         );
       }
     }
-    return $derivatives;
+    return $this->derivatives;
   }
 }
