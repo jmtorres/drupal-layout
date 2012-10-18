@@ -40,16 +40,20 @@ class Layout implements DerivativeInterface {
    * Implements DerivativeInterface::getDerivativeDefinitions().
    */
   public function getDerivativeDefinitions(array $base_plugin_definition) {
-    $layouts = rlayout_load_all();
+    // Use module_invoke() because plugins are active even if the module is not
+    // enabled.
     $derivatives = array();
-    foreach ($layouts as $key => $layout) {
-      $derivatives[$key] = array(
-        'id' => $layout->id(),
-        'title' => $layout->label(),
-        'available regions' => $layout->regions,
-        'region overrides' => $layout->overrides,
-        'class' => 'Drupal\rlayout\Plugin\layout\layout\ResponsiveLayout',
-      );
+    $layouts = module_invoke('rlayout', 'load_all');
+    if (!empty($layouts)) {
+      foreach ($layouts as $key => $layout) {
+        $derivatives[$key] = array(
+          'id' => $layout->id(),
+          'title' => $layout->label(),
+          'available regions' => $layout->regions,
+          'region overrides' => $layout->overrides,
+          'class' => 'Drupal\rlayout\Plugin\layout\layout\ResponsiveLayout',
+        );
+      }
     }
     return $derivatives;
   }
