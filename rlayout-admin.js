@@ -54,7 +54,7 @@ Drupal.responsiveLayout.init = function() {
   for (var gridIndex in Drupal.settings.responsiveLayout.defaultGrids) {
     gridList.push({
       'machine_name': Drupal.settings.responsiveLayout.defaultGrids[gridIndex].id,
-      'columns': Drupal.settings.responsiveLayout.defaultGrids[gridIndex].columns,
+      'columns': Drupal.settings.responsiveLayout.defaultGrids[gridIndex].options.columns,
       'classes': ['rld-container-' + Drupal.settings.responsiveLayout.defaultGrids[gridIndex].id],
     });
   }

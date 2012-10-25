@@ -23,13 +23,20 @@ class RLayoutFormController extends EntityFormController {
    */
   protected function prepareEntity(EntityInterface $layout) {
     if (empty($layout->regions)) {
-      // Set some defaults for the user if this is a new layout.
-      $layout->regions = array();
-      $default_regions = region_load_all();
-      foreach ($default_regions as $region) {
-        $layout->regions[] = $region->id();
+      if ($default = rlayout_load('default')) {
+        // Attempt to clone the default layout if available.
+        $layout->regions = $default->regions;
+        $layout->overrides = $default->overrides;
       }
-      $layout->overrides = array();
+      else {
+        // If the default cannot be cloned, set some defaults.
+        $layout->regions = array();
+        $default_regions = region_load_all();
+        foreach ($default_regions as $region) {
+          $layout->regions[] = $region->id();
+        }
+        $layout->overrides = array();
+      }
     }
   }
 
@@ -49,7 +56,7 @@ class RLayoutFormController extends EntityFormController {
       '#type' => 'machine_name',
       '#default_value' => $layout->id(),
       '#machine_name' => array(
-        'exists' => 'layout_load',
+        'exists' => 'rlayout_load',
         'source' => array('label'),
       ),
       '#disabled' => !$layout->isNew(),
@@ -86,7 +93,7 @@ class RLayoutFormController extends EntityFormController {
               'layout' => $layout,
               'defaultRegions' => region_load_all(),
               'defaultBreakpoints' => rlayout_breakpoints_load_all(),
-              'defaultGrids' => gridbuilder_load_all(),
+              'defaultGrids' => entity_load_multiple('grid'),
             ),
           ),
           'type' => 'setting',
@@ -177,4 +184,3 @@ class RLayoutFormController extends EntityFormController {
   }
 
 }
-

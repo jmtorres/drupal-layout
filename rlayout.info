@@ -6,6 +6,7 @@ core = 8.x
 dependencies[] = config
 configure = admin/structure/layouts
 
+dependencies[] = layout
 dependencies[] = breakpoint
 dependencies[] = region
-dependencies[] = gridbuilder
+dependencies[] = grid

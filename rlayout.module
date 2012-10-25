@@ -28,7 +28,7 @@ function rlayout_menu() {
     'type' => MENU_LOCAL_ACTION,
     'file' => 'rlayout.admin.inc',
   );
-  $items['admin/structure/layouts/layout/%rlayout/edit'] = array(
+  $items['admin/structure/layouts/manage/%rlayout'] = array(
     'title' => 'Edit layout',
     'page callback' => 'rlayout_page_edit',
     'page arguments' => array(4),
@@ -37,13 +37,18 @@ function rlayout_menu() {
     'type' => MENU_CALLBACK,
     'file' => 'rlayout.admin.inc',
   );
-  $items['admin/structure/layouts/layout/%rlayout/delete'] = array(
+  $items['admin/structure/layouts/manage/%rlayout/edit'] = array(
+    'title' => 'Edit',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+  $items['admin/structure/layouts/manage/%rlayout/delete'] = array(
     'title' => 'Delete',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('rlayout_delete_confirm', 4),
     'access callback' => 'user_access',
     'access arguments' => array('administer layouts'),
-    'type' => MENU_CALLBACK,
+    'type' => MENU_LOCAL_TASK,
     'file' => 'rlayout.admin.inc',
   );
   return $items;
@@ -75,7 +80,7 @@ function rlayout_entity_info() {
     'list controller class' => 'Drupal\Core\Config\Entity\ConfigEntityListController',
     'list path' => 'admin/structure/layouts',
     'uri callback' => 'rlayout_uri',
-    'config prefix' => 'rlayout',
+    'config prefix' => 'rlayoutset',
     'entity keys' => array(
       'id' => 'id',
       'label' => 'label',
@@ -96,7 +101,7 @@ function rlayout_entity_info() {
  */
 function rlayout_uri(RLayout $layout) {
   return array(
-    'path' => 'admin/structure/layouts/layout/' . $layout->id(),
+    'path' => 'admin/structure/layouts/manage/' . $layout->id(),
   );
 }
 
@@ -124,11 +129,11 @@ function rlayout_load_all() {
  * Helper function to return processed breakpoint information for layouts.
  *
  * @todo
- *   Currently tied to one breakpoint group in gridbuilder, but it should be
+ *   Currently tied to one breakpoint group in rlayout, but it should be
  *   made independent and configurable.
  */
 function rlayout_breakpoints_load_all() {
-  $grid_breakpoints = entity_load('breakpoint_group', 'module.gridbuilder.gridbuilder');
+  $grid_breakpoints = entity_load('breakpoint_group', 'module.rlayout.rlayout');
   $breakpoint_info = array();
   foreach ($grid_breakpoints->breakpoints as $key => $breakpoint) {
     // Only include this breakpoint in the output if we found a grid for it.
@@ -159,9 +164,9 @@ function rlayout_breakpoints_load_all() {
  * Find the (first) grid matching this breakpoint.
  */
 function rlayout_breakpoint_find_grid($breakpoint_key) {
-  $all_grids = gridbuilder_load_all();
+  $all_grids = entity_load_multiple('grid');
   foreach ($all_grids as $grid) {
-    if (!empty($grid->breakpoints) && in_array($breakpoint_key, $grid->breakpoints)) {
+    if (!empty($grid->options['breakpoints']) && in_array($breakpoint_key, $grid->options['breakpoints'])) {
       return $grid->id();
     }
   }
@@ -229,15 +234,16 @@ function rlayout_breakpoint_get_css($include_media_queries = TRUE) {
 
   $breakpoint_css = array();
   foreach ($breakpoints as $name => $breakpoint) {
+    $grid = entity_load('grid', $breakpoint->grid);
     if ($include_media_queries) {
       $breakpoint_css[] =
         '@media ' . $breakpoint->mediaQuery . ' {';
       // Get grid CSS from gridbuilder and apply some extra indentation.
-      $breakpoint_css[] = '  ' . str_replace("\n", "\n  ", gridbuilder_get_css($breakpoint->grid, '.panel-responsive', '.rld-span-' . $name . '_'));
+      $breakpoint_css[] = '  ' . str_replace("\n", "\n  ", $grid->getGridCss('.panel-responsive', '.rld-span-' . $name . '_'));
       $breakpoint_css[] = "\n}";
     }
     else {
-      $breakpoint_css[] = gridbuilder_get_css($breakpoint->grid, NULL, NULL, TRUE);
+      $breakpoint_css[] = $grid->getGridCss(NULL, NULL, TRUE);
     }
   }
   $css = join("\n", $breakpoint_css);
