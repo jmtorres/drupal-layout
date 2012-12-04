@@ -305,7 +305,7 @@ function layout_breakpoint_load($name) {
  */
 function layout_breakpoint_get_css($include_media_queries = TRUE) {
   $breakpoints = layout_breakpoint_load_all();
-  
+
   $breakpoint_css = array();
   $min_width = 0;
 
@@ -313,35 +313,39 @@ function layout_breakpoint_get_css($include_media_queries = TRUE) {
   $breakpoint_index = 0;
   foreach ($breakpoints as $name => $breakpoint) {
     if ($include_media_queries) {
-      $first_breakpoint = $breakpoint_index == 0;
-      $last_breakpoint = ($breakpoint_index == ($breakpoint_count - 1));
 
-      // Build the media query for this breakpoint. The first item should not have
-      // a min-width (open ended to 0), and the last item should have no max-width
+      // Build the media query for this breakpoint. The first item should have a
+      // min-width of 0, and the last item should have no max-width
       // (open-ended to infinity). Mid-items should both have a min-width and a
-      // max-width.
-      $breakpoint_css[] =
-        '@media screen and (' .
-        ($first_breakpoint ? '' : 'min-width:' . $min_width) .
-        ((!$first_breakpoint && !$last_breakpoint) ? ') and (' : '') .
-        ($last_breakpoint ? '' : 'max-width:' . $breakpoint->width) .
-        ') {';
-      // Get grid CSS from gridbuilder and apply some extra indentation.
-      $breakpoint_css[] = '  ' . str_replace("\n", "\n  ", gridbuilder_get_css($breakpoint->grid_name, '.panel-responsive', '.rld-span-' . $name . '_'));
-      $breakpoint_css[] = "\n}";
+      // max-width. A breakpoint specifies the max-width for the previous breakpoint
+      // (if any).
+      $breakpoint_css[$breakpoint_index]['media-query'] = '@media screen and (min-width:' . $breakpoint->width . ')';
+      if ($breakpoint_index > 0) {
+        $breakpoint_css[$breakpoint_index - 1]['media-query'] .= ' and (max-width: ' . $breakpoint->width . ')';
+      }
 
-      // Remember min-width for next breakpoint if applicable. The breakpoints
-      // are in ascending width order, so we can rely on this sequence.
-      $min_width = $breakpoint->width;
+      // Get grid CSS from gridbuilder and apply some extra indentation.
+      $breakpoint_css[$breakpoint_index]['css'] = '  ' . str_replace("\n", "\n  ", gridbuilder_get_css($breakpoint->grid_name, '.panel-responsive', '.rld-span-' . $name . '_'));
+
       $breakpoint_index++;
     }
     else {
-      $breakpoint_css[] = gridbuilder_get_css($breakpoint->grid_name, NULL, NULL, TRUE);
+      $breakpoint_css[$breakpoint_index]['css'] = gridbuilder_get_css($breakpoint->grid_name, NULL, NULL, TRUE);
     }
   }
-  $css = join("\n", $breakpoint_css);
 
-  return $css;
+  // Build CSS based on media query information.
+  $built_css = '';
+  foreach ($breakpoint_css as $data) {
+    if (isset($data['media-query'])) {
+      $built_css .= $data['media-query'] . " {\n" . $data['css'] . "\n}";
+    }
+    else {
+      $built_css .= $data['css'] . "\n";
+    }
+  }
+
+  return $built_css;
 }
 
 /**
