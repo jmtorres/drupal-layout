@@ -6,37 +6,6 @@
  */
 
 /**
- * Implements hook_init().
- */
-function layout_init() {
-  // Don't load the ResponsiveLayoutDesigner preview bar on admin pages.
-  if (arg(0) == 'admin') {
-    return;
-  }
-
-  // Load the responsive layout object.
-  ctools_include('plugins');
-  $layouts = ctools_get_plugins('panels', 'layouts');
-  $layout = $layouts['responsive'];
-
-  $breakpoints = layout_breakpoint_load_all();
-  $grids = gridbuilder_load_all();
-  // Push the breakpoints info to settings for the layoutPreviewer.
-  drupal_add_js(array(
-    'layout' => array(
-      'breakpoints' => $breakpoints,
-      'grids' => $grids,
-    ),
-  ), 'setting');
-
-  // Add the ResponsiveLayoutDesigner application.
-  layout_responsive_load_rld_application($layout['path']);
-  drupal_add_css($layout['path'] . '/responsive-in-place.css');
-  // Add integration code for Drupal.
-  drupal_add_js($layout['path'] . '/responsive-in-place.js');
-}
-
-/**
  * Implementation of hook_module_implements_alter().
  */
 function layout_module_implements_alter(&$implementations, $hook) {
