@@ -4,3 +4,4 @@ description: 'Makes it possible to swap different page layouts.'
 package: Core
 version: VERSION
 core: 8.x
+configure: layout.list

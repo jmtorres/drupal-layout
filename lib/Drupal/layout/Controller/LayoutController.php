@@ -8,14 +8,16 @@
 namespace Drupal\layout\Controller;
 
 use Drupal\Component\Utility\String;
-use Drupal\Core\Controller\ControllerInterface;
+use Drupal\Core\Access\AccessInterface;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\layout\Plugin\Type\LayoutManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Controller routines for layout routes.
  */
-class LayoutController implements ControllerInterface {
+class LayoutController implements ContainerInjectionInterface {
 
   /**
    * Stores the Layout manager.
@@ -54,13 +56,14 @@ class LayoutController implements ControllerInterface {
     $rows = array();
     $header = array(t('Name'), t('Source'));
     foreach ($layouts as $name => $layout) {
+      // @todo Cache result of system_get_info().
       $provider_info = system_get_info($layout['provider']['type'], $layout['provider']['provider']);
 
       // Build table columns for this row.
       $row = array();
       $row['name'] = l($layout['title'], 'admin/structure/templates/manage/' . $name);
       // Type can either be 'module' or 'theme'.
-      $row['provider'] = t('@name @type', array('@name' => $provider_info['name'], '@type' => t($layout['provider']['type'])));
+      $row['provider'] = t('%name @type', array('%name' => $provider_info['name'], '@type' => t($layout['provider']['type'])));
 
       $rows[] = $row;
     }
@@ -70,6 +73,7 @@ class LayoutController implements ControllerInterface {
       '#theme' => 'table',
       '#header' => $header,
       '#rows' => $rows,
+      '#empty' => t('No layouts defined'),
     );
     return $build;
 
@@ -89,9 +93,6 @@ class LayoutController implements ControllerInterface {
    *   An array as expected by drupal_render().
    */
   public function layoutPageView($key) {
-    $layout = $this->layoutManager->getDefinition($key);
-    drupal_set_title(t('View template %name', array('%name' => $layout['title'])), PASS_THROUGH);
-
     // Render the layout in an admin context with region demonstrations.
     $instance = $this->layoutManager->createInstance($key, array());
     $regions = $instance->getRegions();
@@ -100,9 +101,18 @@ class LayoutController implements ControllerInterface {
     }
     $build['demonstration']['#markup'] = $instance->renderLayout(TRUE, $regions);
 
+    $layout = $this->layoutManager->getDefinition($key);
+    $build['#title'] = t('View template %name', array('%name' => $layout['title']));
     // @todo Convert layout.admin.css to a library.
-    $build['#attached']['css'][] = drupal_get_path('module', 'layout') . '/layout.admin.css';
+    $build['#attached']['css'][] = drupal_get_path('module', 'layout') . '/css/layout.admin.css';
     return $build;
+  }
+
+  /**
+   * Checks access for the layout template.
+   */
+  public function checkAccess(Request $request) {
+    return $this->layoutManager->getDefinition($request->attributes->get('key')) ? AccessInterface::ALLOW : AccessInterface::DENY;
   }
 
 }
