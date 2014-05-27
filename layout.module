@@ -288,7 +288,11 @@ function layout_breakpoint_get_css($include_media_queries = TRUE) {
       // (open-ended to infinity). Mid-items should both have a min-width and a
       // max-width. A breakpoint specifies the max-width for the previous breakpoint
       // (if any).
-      $breakpoint_css[$breakpoint_index]['media-query'] = '@media screen and (min-width:' . $breakpoint->width . ')';
+
+      preg_match('/([\d\.]+)\s*(em|px|pt|%)/', $breakpoint->width, $width);
+      $min_width = $width[1] + 1 . $width[2];
+
+      $breakpoint_css[$breakpoint_index]['media-query'] = '@media screen and (min-width:' . $min_width . ')';
       if ($breakpoint_index > 0) {
         $breakpoint_css[$breakpoint_index - 1]['media-query'] .= ' and (max-width: ' . $breakpoint->width . ')';
       }

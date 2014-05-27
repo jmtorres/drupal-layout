@@ -220,7 +220,8 @@ function theme_layout_responsive($vars) {
   // Render the regions ordered as configured with minimal wrappers.
   $output = '';
   $breakpoint_counters = array();
-  foreach ($content as $name => $rendered) {
+  foreach ($settings['regions'] as $name) {
+    $rendered = $content[$name];
     if (!empty($rendered)) {
       // Add a minimal wrapper with some common classes + configured custom classes.
       // The custom classes are used for grid placement.
